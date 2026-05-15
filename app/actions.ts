@@ -18,11 +18,10 @@ export async function checkAddUser(email: string, name: string) {
                     email,
                     name
                 }
-            })
-            console.error("Erreur lors de la création de l'utilisateur:");
-        } else {
-            console.error("Erreur lors de la création de l'utilisateur:");
+            });
         }
+
+
     } catch (error) {
         console.error("Erreur lors de la validation de l'utilisateur:", error);
     }
