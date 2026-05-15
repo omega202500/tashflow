@@ -2,11 +2,13 @@
 
 // import Wrapper from "./components/wrapper";
 import Wrapper from "./components/wrapper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FolderGit2 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-toastify";
-import { createProject } from "./actions";
+import { createProject, getUserProjects } from "./actions";
+import { Project } from "@/type";
+import ProjectComponent from "./components/ProjectComponent";
 
 export default function Home() {
   const { user } = useUser();
@@ -15,14 +17,36 @@ export default function Home() {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-
-  const handleSubmit = async () => {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const fetchProjects = async (email: string) => {
     try {
-      const modal = document.getElementById(
-        "my_modal_3"
-      ) as HTMLDialogElement;
+       const  myProject = await getUserProjects(email);
+       console.log( myProject);
+        setProjects(myProject)
 
-      const project = await createProject(name, description, email);
+    } catch (error) {
+      console.error("Error fetching projects", error);
+    }
+  }
+
+  useEffect(() => {
+    if (email) {
+      fetchProjects(email);
+    }
+  }, [email]);
+
+
+ const handleSubmit = async () => {
+    try {
+      if (!email) {
+        toast.error("Utilisateur non connecté");
+        console.log("Email undefined, user:", user); // ← pour débugger
+        return;
+      }
+
+      const modal = document.getElementById("my_modal_3") as HTMLDialogElement;
+
+      await createProject(name, description, email);
 
       if (modal) {
         modal.close();
@@ -30,11 +54,12 @@ export default function Home() {
 
       setName("");
       setDescription("");
+      await fetchProjects(email);
 
-      toast.success("Projet Cree");
+      toast.success("Projet créé");
     } catch (error) {
       console.error("Error creating project", error);
-      toast.error("Erreur lors de la creation");
+      toast.error("Erreur lors de la création");
     }
   };
 
@@ -92,11 +117,30 @@ export default function Home() {
             </div>
           </div>
         </dialog>
+        <div className="w-full"> 
+          {projects.length > 0 ? (
+            <ul className="w-full grid md:grid-cols-3 gap-6">
+              {projects.map((project) => (
+                <li key={project.id} >
+                 <ProjectComponent project={project} admin={1}></ProjectComponent>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div></div>
+          )}
+        </div>
       </div>
     </Wrapper>
   );
 }
 
+
+
+
+function getProjectsCreatedByUser(email: string) {
+  throw new Error("Function not implemented.");
+}
 // function createProject(
 //   name: string,
 //   description: string,
