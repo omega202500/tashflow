@@ -6,6 +6,7 @@ import { useState } from "react";
 import { FolderGit2 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-toastify";
+import { createProject } from "./actions";
 
 export default function Home() {
   const { user } = useUser();
@@ -21,7 +22,7 @@ export default function Home() {
         "my_modal_3"
       ) as HTMLDialogElement;
 
-      // const project = await createProject(name, description, email);
+      const project = await createProject(name, description, email);
 
       if (modal) {
         modal.close();
@@ -85,7 +86,7 @@ export default function Home() {
                 required
               ></textarea>
 
-              <button className="btn btn-primary" onClick={handleSubmit}>
+              <button type="button" className="btn btn-primary" onClick={handleSubmit}>
                 Nouveau Projet <FolderGit2 />
               </button>
             </div>

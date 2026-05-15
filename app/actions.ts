@@ -19,9 +19,9 @@ export async function checkAddUser(email: string, name: string) {
                     name
                 }
             })
-            console.error("Erreur lors de la validation de l'utilisateur:");
+            console.error("Erreur lors de la création de l'utilisateur:");
         } else {
-            console.error("Erreur lors de la validation de l'utilisateur:");
+            console.error("Erreur lors de la création de l'utilisateur:");
         }
     } catch (error) {
         console.error("Erreur lors de la validation de l'utilisateur:", error);
@@ -30,7 +30,7 @@ export async function checkAddUser(email: string, name: string) {
 function generateUniqueCode(): string {
     return randomBytes(6).toString('hex')
 }
-export async function crateproject(name: string, description: string, email: string) {
+export async function createProject(name: string, description: string, email: string) {
     try {
         const inviteCode = generateUniqueCode()
         const user = await prisma.user.findUnique({
